@@ -1,0 +1,38 @@
+<% include ../partials/header %>
+
+<br>
+<h2><span style="font-size: 2rem; color: blue;">
+    <i class="far fa-id-card"></i></span>
+    <%=funcionario.nome%>  -  
+    <span class="badge badge-secondary"><%=funcionario.matricula%></span>
+</h2>
+<br>
+
+<form action="/funcionarios/<%=funcionario._id%>/retroativos" method="POST">
+        <div class="row">
+          <div class="col">
+            <label for="formaPagto">Forma de Pagamento</label>
+            <select name="formaDePagamento" class="form-control" id="formaPagto">
+                    <% for(let forma in formaDePagamento) { %>
+                        <option value="<%=formaDePagamento[forma]%>"><%=formaDePagamento[forma]%></option>
+                    <% } %>
+            </select>
+        </div>
+        <div class="col">
+                <label for="tipo">Tipo de Retroativo</label>
+                <select name="tipoDoRetroativo" class="form-control" id="tipo">
+                    <% for(let tipo in tipoDoRetroativo) { %>
+                        <option value="<%=tipoDoRetroativo[tipo]%>"><%=tipoDoRetroativo[tipo]%></option>
+                    <% } %>
+                </select>
+          </div>
+          <div class="col">
+                <label style="visibility:hidden">Salvar</label><br>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+          </div>
+        </div>
+</form>
+
+
+<script src="/js/retroativosNew.js"></script>
+<% include ../partials/footer %>

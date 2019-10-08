@@ -1,0 +1,36 @@
+<% include ../partials/header %>
+
+<br>
+<h2><span style="font-size: 2rem; color: blue;">
+    <i class="far fa-id-card"></i></span>
+    <%=funcionario.nome%>  -  
+    <span class="badge badge-secondary"><%=funcionario.matricula%></span>
+</h2>
+
+<table id="tabela_retroativos" class="table" style="visibility: visible">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Forma de Pagto</th>
+            <th scope="col">Pagpdt</th>
+            <th scope="col">Data da Emissão</th>  
+          </tr>
+        </thead>
+        <tbody id="body_tabela_retroativos">
+          <% retroativos.forEach(function (retroativo, index) { %>
+            <tr>
+                <th scope="row"><%=index+1%></th>
+                <td><%=retroativo.tipoDoRetroativo%></td>
+                <td>xxxxxxx</td>
+                <td><%=retroativo.numeroPAGPDT%></td>
+                <td><%=retroativo.dataEmissao%></td>
+              </tr>
+          <% }) %>
+
+
+        </tbody>
+      </table>
+
+<script src="/js/retroativo.js"></script>
+<% include ../partials/footer %>

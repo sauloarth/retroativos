@@ -1,0 +1,29 @@
+<% include ../partials/header %>
+
+<form id="formulario_busca">
+
+        <div class="form-group">
+          <label for="nomeOuMatricula">Insira o nome ou a matrícula do servidor</label>
+          <input type="text" class="form-control" id="campo_busca" placeholder="123455 - JOSE DA SILVA"/>
+        </div>
+        <br>
+        <button class="btn btn-primary" id="botao_buscar">Buscar</button>
+
+</form>
+<br>
+
+<table id="tabela_resultados" class="table" style="visibility: hidden">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Matrícula</th>
+            <th scope="col">Operações</th>  
+          </tr>
+        </thead>
+        <tbody id="body_tabela_resultados">
+        </tbody>
+      </table>
+
+<script src="/js/busca.js"></script>
+<% include ../partials/footer %>
