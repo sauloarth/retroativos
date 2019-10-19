@@ -1,0 +1,75 @@
+### FUNCIONARIO ROUTES
+POST http://localhost:5000/funcionarios HTTP/1.1
+content-type: application/json
+
+{
+    "nome": "Dualibe Cruz",
+    "matricula": "1775539"
+}
+###
+GET http://localhost:5000/funcionarios HTTP/1.1
+###
+GET http://localhost:5000/funcionarios?busca=17 HTTP/1.1
+###
+PUT http://localhost:5000/funcionarios/5dab11c4fba88774a9628dea HTTP/1.1
+content-type: application/json
+
+{
+    "matricula": "1885539"
+}
+###
+DELETE http://localhost:5000/funcionarios/5dab1d2b33cf447bfb2b38c7 HTTP/1.1
+
+### RETROATIVO ROUTES
+POST http://localhost:5000/funcionarios/5dab11a5fba88774a9628de9/retroativos HTTP/1.1
+content-type: application/json
+
+{
+    "documento": "SEI 605928/2017-83",
+    "referencia": "5dab3a056bb6681145c6ceb5",
+    "modoDeRestituicao": "5dab3b856bb6681145c6ceb7"
+}
+
+###
+GET http://localhost:5000/funcionarios/5dab11a5fba88774a9628de9/retroativos HTTP/1.1
+
+###
+PUT http://localhost:5000/funcionarios/5dab11a5fba88774a9628de9/retroativos/5dab6a190683283e4cf28c5e HTTP/1.1
+content-type: application/json
+
+{
+    "documento":"SEI 605928/2017-89"
+}
+
+###
+DELETE http://localhost:5000/funcionarios/5dab11a5fba88774a9628de9/retroativos/5dab3e696bb6681145c6ceb8 HTTP/1.1
+
+
+### REFERENCIA ROUTES
+POST http://localhost:5000/referencias HTTP/1.1
+content-type: application/json
+
+{
+    "descricao":"GCET"
+}
+
+###
+GET http://localhost:5000/referencias HTTP/1.1
+
+###
+GET http://localhost:5000/referencias/5dab3a056bb6681145c6ceb5 HTTP/1.1
+
+### MODODERESTITUICAO ROUTES
+
+POST http://localhost:5000/modosDeRestituicao HTTP/1.1
+content-type: application/json
+
+{
+    "descricao": "exercicio findo"
+}
+
+###
+GET http://localhost:5000/modosDeRestituicao HTTP/1.1
+
+###
+GET http://localhost:5000/modosDeRestituicao/5dab3b856bb6681145c6ceb7 HTTP/1.1

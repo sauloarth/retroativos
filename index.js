@@ -2,9 +2,18 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/retroativodb', 
-    {useNewUrlParser: true, useUnifiedTopology: true},() => {
-    console.log('Connected to retroativodb.');
+//require das routes
+const indexRoutes = require('./controllers/index');
+const funcionariosRoutes = require('./controllers/funcionarios');
+const retroativosRoutes = require('./controllers/retroativos');
+const referenciasRoutes = require('./controllers/referencias');
+const modosDeRestituicaoRoutes = require('./controllers/modosDeRestituicao');
+
+
+
+mongoose.connect('mongodb://localhost:27017/retroativodb2', 
+    {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify:true},() => {
+    console.log('Connected to retroativodb2.');
 })
 
 
@@ -15,9 +24,12 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
 //routes
-app.get('/', function(req, res) {
-    res.render('pages/index');
-});
+app.use('/', indexRoutes);
+app.use('/funcionarios', funcionariosRoutes);
+app.use('/funcionarios/:funcionario_id/retroativos', retroativosRoutes);
+app.use('/referencias', referenciasRoutes);
+app.use('/modosDeRestituicao', modosDeRestituicaoRoutes);
+
 
 app.get('/cadastrar', function(req, res) {
     res.render('pages/cadastrar');
@@ -32,11 +44,7 @@ app.get('/funcionarios/:id/retroativos/new',  async function(req, res) {
     });
 });
 
-app.get('/funcionarios', async function(req, res) {
-    console.log('Query: ', req.query);
-    const result = await getFuncionarios(req.query.busca);
-    res.send(result);
-});
+
 
 app.get('/funcionarios/:id/retroativos', async(req, res) =>{
     const funcionario = await getFuncionarioById(req.params.id);
@@ -58,59 +66,59 @@ app.post('/funcionarios/:id/retroativos', async(req, res) => {
 })
 
 //Schema 
-const funcionarioSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
-    nome: String,
-    matricula: String,
-    retroativos: [{
-        type: mongoose.Schema.Types.ObjectId, 
-        refPath: 'onModel' 
-    }],
-    onModel: {
-        type:'String',
-        required:true,
-        enum: ['Pagpdt', 'ExercicioFindo']
-    }
-});
+// const funcionarioSchema = mongoose.Schema({
+//     _id: mongoose.Schema.Types.ObjectId,
+//     nome: String,
+//     matricula: String,
+//     retroativos: [{
+//         type: mongoose.Schema.Types.ObjectId, 
+//         refPath: 'onModel' 
+//     }],
+//     onModel: {
+//         type:'String',
+//         required:true,
+//         enum: ['Pagpdt', 'ExercicioFindo']
+//     }
+// });
 
-const retroativoPAGPDTSchema = mongoose.Schema({
-    funcionario:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Funcionario'
-    },
-    tipoDoRetroativo: String,
-    numeroPAGPDT: String,
-    mesesDePagamento: [{
-        dataInicialDoMes: Date,
-        dataFinalDoMes: Date,
-        vencimentoDoMes: Number,
-        totalDoMes: Number
-    }],
-    totalDoRetroativo: {type: Number, default:0},
-    dataEmissao: {type: Date, default: Date.now}
-})
+// const retroativoPAGPDTSchema = mongoose.Schema({
+//     funcionario:{
+//         type:mongoose.Schema.Types.ObjectId,
+//         ref:'Funcionario'
+//     },
+//     tipoDoRetroativo: String,
+//     numeroPAGPDT: String,
+//     mesesDePagamento: [{
+//         dataInicialDoMes: Date,
+//         dataFinalDoMes: Date,
+//         vencimentoDoMes: Number,
+//         totalDoMes: Number
+//     }],
+//     totalDoRetroativo: {type: Number, default:0},
+//     dataEmissao: {type: Date, default: Date.now}
+// })
 
-const retroativoExercicioFindoSchema = mongoose.Schema({
-    funcionario:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Funcionario'
-    },
-    tipoDoRetroativo: String,
-    mesesDePagamento: [{
-        dataInicialDoMes: Date,
-        dataFinalDoMes: Date,
-        vencimentoDoMes: Number,
-        atualizacaoMonetaria: Number,
-        totalDoMes: Number
-    }],
-    totalDoRetroativo: {type: Number, default:0},
-    dataEmissao: {type: Date, default: Date.now}
-})
+// const retroativoExercicioFindoSchema = mongoose.Schema({
+//     funcionario:{
+//         type:mongoose.Schema.Types.ObjectId,
+//         ref:'Funcionario'
+//     },
+//     tipoDoRetroativo: String,
+//     mesesDePagamento: [{
+//         dataInicialDoMes: Date,
+//         dataFinalDoMes: Date,
+//         vencimentoDoMes: Number,
+//         atualizacaoMonetaria: Number,
+//         totalDoMes: Number
+//     }],
+//     totalDoRetroativo: {type: Number, default:0},
+//     dataEmissao: {type: Date, default: Date.now}
+// })
 
 
-const Funcionario = mongoose.model('Funcionario', funcionarioSchema);
-const Pagpdt = mongoose.model('Pagpdt', retroativoPAGPDTSchema);
-const ExercicioFindo = mongoose.model('ExercicioFindo', retroativoExercicioFindoSchema);
+//const Funcionario = mongoose.model('Funcionario', funcionarioSchema);
+// const Pagpdt = mongoose.model('Pagpdt', retroativoPAGPDTSchema);
+// const ExercicioFindo = mongoose.model('ExercicioFindo', retroativoExercicioFindoSchema);
 
 async function resetFuncionariosCollection(){
     const result = await Funcionario.deleteMany({_id:{$exists:true}});
@@ -183,15 +191,6 @@ async function resetRetroativos(){
 
 //resetRetroativos();
 
-async function getFuncionarios(query){
-    const regexNome = new RegExp(`.*${query}.*`, 'i');
-    const regexMatricula = new RegExp(`^${query}.*`);
-    const result = await Funcionario
-        .find()
-        .or([{nome: regexNome}, {matricula: regexMatricula}]);
-    console.log(result);
-    return result;
-}
 
 async function getFuncionarioById(id){
     const funcionario = await Funcionario.findById(id);
@@ -248,16 +247,16 @@ app.listen(port, () =>{
 
 //enums
 const tipoDoRetroativo = {
-    ADICIONAL_DE_INSALUBRIDADE: 'adicional de insalubridade',
-    INDENIZACAO_DE_TRANSPORTE: 'indenização de transporte',
-    GMOV: 'gmov',
-    GCET: 'gcet',
-    GAB: 'gab',
-    FALTAS_COMPENSADAS: 'faltas compensados',
-    ATRASOS_COMPENSADOS: 'atrasos compensados'
+    ADICIONAL_DE_INSALUBRIDADE: 'Adicional de Insalubridade',
+    INDENIZACAO_DE_TRANSPORTE: 'Indenização de Transporte',
+    GMOV: 'GMOV',
+    GCET: 'GCET',
+    GAB: 'GAB',
+    FALTAS_COMPENSADAS: 'Faltas Compensados',
+    ATRASOS_COMPENSADOS: 'Atrasos Compensados'
 };
 
 const formaDePagamento = {
-    PAGPDT: 'pagpdt',
-    EXERCICIO_FINDO: 'exercicio findo'
+    PAGPDT: 'PAGPDT',
+    EXERCICIO_FINDO: 'Exercicio Findo'
 };
